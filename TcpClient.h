@@ -1,56 +1,66 @@
 /*!
- @file      IUdpClient.h
- @brief     UDP Client
+ @file      TcpClient.h
+ @brief     Tcp Client
  @attention
 */
 #pragma once
 
 // ---------------< include >----------------------------
-#include <string>
+#include <memory>
+#include <arpa/inet.h>
+#include "ITcpClient.h"
 
 // --------------< namespace >---------------------------
 
 // ---------< forward declaration >----------------------
-class IPv4;
-class Port;
-class Hostname;
 
 /*!
- @class     IUdpClient
- @brief     UDP Client
+ @class     TcpClient
+ @brief     TcpClient
  @attention
 */
-class IUdpClient
+class TcpClient final : public ITcpClient
 {
 public:
     /*!
     @brief  デフォルトコンストラクタ
     */
-    IUdpClient() = default;
+    TcpClient() = delete;
 
     /*!
     @brief      コンストラクタ
     @param[in]  ipAddress サーバアドレス
     @param[in]  port サーバの待ち受けポート番号
     */
-    IUdpClient( IPv4& ipAddress, Port& port ){};
+    TcpClient( IPv4& ipAddress, Port& port );
 
     /*!
     @brief      コンストラクタ
     @param[in]  hostname RFC952及びRFC1123に準拠したホスト名
     @param[in]  port サーバの待ち受けポート番号
     */
-    IUdpClient( Hostname& hostname, Port& port ){};
+    TcpClient( Hostname& hostname, Port& port );
 
     /*!
     @brief  デフォルトデストラクタ
     */
-    virtual ~IUdpClient() = default;
+    virtual ~TcpClient();
 
     /*!
     @brief      データを送信する
     @param[in]  content 送信データ
     */
-    virtual void send( const std::string content ) const = 0;
+    void sendData( const std::string content ) const override;
 
+    /*!
+    @brief   データを受信する
+    @return  受信データ。受信データが無い場合は無効値を返す
+    */
+    std::optional<std::string> receiveData() override;
+
+private:
+    int sock_;                            //!< 送信用ソケット
+    struct sockaddr_in addr_;             //!< ネットワーク設定
+
+    void initialize(std::string ipAddress, Port& port);
 };
