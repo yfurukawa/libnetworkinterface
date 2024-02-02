@@ -2,7 +2,8 @@ RM = rm -rf
 CC = g++
 AR = ar
 CP = cp -Rf
-INSTALL = install -m 644
+INSTALL = install -o root -g root -m 644
+MKDIR = mkdir -p
 INCLUUDE = -I/usr/include -I/usr/local/include
 LD_PATH = -L/usr/lib64 -L/usr/local/lib64
 LIB_DIR = /usr/local/lib64
@@ -21,6 +22,7 @@ clean:
 	$(RM) *.o $(TARGET)
 
 install:
+	$(MKDIR) $(LIB_DIR)
 	$(INSTALL) $(TARGET) $(LIB_DIR)
-	$(CP) *.h $(INCLUDE_DIR)
-	$(CP) skills/ $(INCLUDE_DIR)
+	$(INSTALL) *.h $(INCLUDE_DIR)
+	$(INSTALL) skills/ $(INCLUDE_DIR)
